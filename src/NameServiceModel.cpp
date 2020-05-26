@@ -16,7 +16,7 @@ NameServiceModel::~NameServiceModel()
     }
 }
 
-void NameServiceModel::update(const QModelIndex &i, const QModelIndex &j)
+void NameServiceModel::taskModelDataChanged(const QModelIndex &i, const QModelIndex &j)
 {
     emit dataChanged(i, j);
 }
@@ -25,7 +25,7 @@ void NameServiceModel::addTaskModel(TaskModel* task)
 {
     taskModels.push_back(task);
     appendRow(task->getRow());
-    connect(task, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(update(const QModelIndex &, const QModelIndex &)));
+    connect(task, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(taskModelDataChanged(const QModelIndex &, const QModelIndex &)));
     //FIXME why is the notifier connected here, nobody except the taskmodel should know about it
     connect(this, SIGNAL(stopNotifier()), task->notifier, SLOT(stopNotifier()), Qt::DirectConnection);
     connect(task, SIGNAL(taskAdded(const TaskItem*)), this, SLOT(taskAdded(const TaskItem*)));

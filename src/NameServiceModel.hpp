@@ -18,8 +18,9 @@ public:
     void updateTasks();
     void waitForTerminate();
 
+private slots:
+    void taskModelDataChanged(const QModelIndex &i, const QModelIndex &j);
 public slots:
-    void update(const QModelIndex &i, const QModelIndex &j);
     void stop();
     void addNameService(const std::string &nameServiceIP);
     void taskAdded(const TaskItem* task);
