@@ -46,7 +46,7 @@ public slots:
         while (isRunning)
         {
             model->updateTasks();
-            usleep(100);
+            usleep(20000);
         }
         
         model->waitForTerminate();
