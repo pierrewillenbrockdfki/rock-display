@@ -263,6 +263,52 @@ std::string getValue(const Typelib::Value& value)
     return valueS;
 }
 
+template <>
+std::string getValue<uint8_t>(const Typelib::Value& value)
+{
+    uint8_t *val = static_cast<uint8_t *>(value.getData());
+    std::string valueS = "";
+
+    if (!val)
+    {
+        return valueS;
+    }
+
+    try
+    {
+        valueS = boost::lexical_cast<std::string>((int)*val);
+    }
+    catch (...)
+    {
+
+    }
+
+    return valueS;
+}
+
+template <>
+std::string getValue<int8_t>(const Typelib::Value& value)
+{
+    int8_t *val = static_cast<int8_t *>(value.getData());
+    std::string valueS = "";
+
+    if (!val)
+    {
+        return valueS;
+    }
+
+    try
+    {
+        valueS = boost::lexical_cast<std::string>((int)*val);
+    }
+    catch (...)
+    {
+
+    }
+
+    return valueS;
+}
+
 bool Simple::update(Typelib::Value& valueIn, bool updateUI, bool forceUpdate)
 {
     bool updateNecessary = forceUpdate || updateUI;
@@ -425,9 +471,9 @@ Complex::Complex(Typelib::Value& valueIn, TypedItem *name, TypedItem *value)
 {
     transport = nullptr;
     transportHandle = nullptr;
-    
-    update(valueIn, true, true);
+
     this->value->setText(valueIn.getType().getName().c_str());
+    update(valueIn, true, true);
 }
 
 Complex::~Complex()
@@ -486,7 +532,8 @@ bool Complex::update(Typelib::Value& valueIn, bool updateUI, bool forceUpdate)
             {
                 return false;
             }
-            
+
+            value->setText("test");
             const std::string content = *static_cast<const std::string *>(valueIn.getData());
             
             if (codec)
@@ -494,11 +541,12 @@ bool Complex::update(Typelib::Value& valueIn, bool updateUI, bool forceUpdate)
                 const QString text = codec->toUnicode(content.c_str(), content.size(), &state);
                 if (state.invalidChars > 0)
                 {
-                    value->setText(QString(""));
+                    return updateNecessary;
                 }
                 else if (value->text().toStdString() != text.toStdString())
                 {
                     value->setText(text);
+                    return true;
                 }
             }
             
