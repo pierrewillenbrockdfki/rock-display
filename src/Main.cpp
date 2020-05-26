@@ -12,13 +12,12 @@
 
 #include <orocos_cpp/TypeRegistry.hpp>
 #include <orocos_cpp/PluginHelper.hpp>
+#include <orocos_cpp/PkgConfigRegistry.hpp>
 #include <thread>
 
 #include <base-logging/Logging.hpp>
 
-orocos_cpp::TypeRegistry typeReg;
-
-bool loadTypkekit(const std::string &typeName)
+bool loadTypekit(const std::string &typeName, orocos_cpp::TypeRegistry &typeReg)
 {
     LOG_INFO_S << "Loading typekit for " << typeName;
     std::string tkName;
@@ -36,16 +35,20 @@ bool loadTypkekit(const std::string &typeName)
 
 int main(int argc, char** argv)
 {
-    typeReg.loadTypeRegistries();
+    orocos_cpp::PkgConfigRegistry::initialize({}, true);
+    orocos_cpp::TypeRegistry typeReg;
+
     RTT::corba::ApplicationServer::InitOrb(argc, argv);
+
+    typeReg.loadTypeRegistries();
+
+    RTT::types::TypeInfoRepository *ti = RTT::types::TypeInfoRepository::Instance().get();
+    boost::function<bool (const std::string &)> f(boost::bind(&loadTypekit, _1, typeReg));
+    ti->setAutoLoader(f);
 
     QApplication app(argc, argv);
     MainWindow w;
     w.show();
-
-    RTT::types::TypeInfoRepository *ti = RTT::types::TypeInfoRepository::Instance().get();
-    boost::function<bool (const std::string &)> f(&loadTypkekit);
-    ti->setAutoLoader(f);
 
     return app.exec();
 }
