@@ -41,6 +41,7 @@ int main(int argc, char** argv)
     RTT::corba::ApplicationServer::InitOrb(argc, argv);
 
     typeReg.loadTypeRegistries();
+    orocos_cpp::PluginHelper::loadTypekitAndTransports("std");
 
     RTT::types::TypeInfoRepository *ti = RTT::types::TypeInfoRepository::Instance().get();
     boost::function<bool (const std::string &)> f(boost::bind(&loadTypekit, _1, typeReg));
