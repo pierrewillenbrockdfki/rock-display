@@ -54,6 +54,7 @@ TaskModel::TaskModel(QObject* parent, const std::string &nameServiceIP)
 
 TaskModel::~TaskModel()
 {
+    waitForTerminate();
     for (std::map<std::string, TaskItem *>::iterator itemIter = nameToItem.begin(); itemIter != nameToItem.end(); itemIter++)
     {
         delete itemIter->second;

@@ -8,6 +8,30 @@
 #include <rock_widget_collection/RockWidgetCollection.h>
 #include <rtt/base/DataSourceBase.hpp>
 
+void MyVizkit3DWidget::closeEvent(QCloseEvent *ev)
+{
+    //by default, the closeEvent calls destroy, which releases all windowing
+    //resources, including the GL resources needed by osg.
+    //instead, use hide() here and abort handling the close event.
+    //if this is the last window, quit the application.
+    //this also bypasses the WA_DeleteOnClose behaviour that fails due
+    //to this widget being a member of MainWindow instead of a heap
+    //allocation
+    hide();
+    bool allHidden = true;
+    const QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
+    for (QWidget *widget : topLevelWidgets) {
+        if (!widget->isHidden())
+	{
+            allHidden = false;
+	    break;
+	}
+    }
+    ev->ignore();
+    if(allHidden)
+        QApplication::quit();
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)

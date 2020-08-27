@@ -81,6 +81,13 @@ signals:
     void requestNameServiceAdd(const std::string &nameServiceIP);
 };
 
+class MyVizkit3DWidget : public vizkit3d::Vizkit3DWidget
+{
+protected:
+    //override the closeEvent since we want to be able to re-show the window
+    void closeEvent(QCloseEvent *ev);
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -116,7 +123,7 @@ signals:
     void stopUIUpdater();
     
 private:
-    vizkit3d::Vizkit3DWidget widget3d;
+    MyVizkit3DWidget widget3d;
     std::vector<PluginHandle> additionalPlugins;
     Ui::MainWindow *ui;
     QThread *taskUpdater;
